@@ -118,6 +118,14 @@ Code
 src/content/about/
 
 Local Development
+## Clone & Run
+
+Clone the repository and run the setup script:
+
+```bash
+git clone https://github.com/<your-username>/portfolio.git
+cd portfolio
+./setup.sh
 
 Install dependencies and start the dev server:
 Code
