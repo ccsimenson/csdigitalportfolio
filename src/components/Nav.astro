@@ -1,0 +1,30 @@
+---
+const links = [
+  { name: "Home", href: "/" },
+  { name: "Projects", href: "/projects" },
+  { name: "Writing", href: "/writing" },
+  { name: "About", href: "/about" },
+];
+
+const current = Astro.url.pathname;
+---
+
+<nav style="display: flex; gap: 1.5rem; padding: 1rem 0;">
+  {links.map(link => {
+    const isActive = current === link.href;
+    return (
+      <a
+        href={link.href}
+        style={`
+          text-decoration: none;
+          font-weight: ${isActive ? "600" : "400"};
+          color: ${isActive ? "#000" : "#555"};
+          border-bottom: ${isActive ? "2px solid #000" : "2px solid transparent"};
+          padding-bottom: 2px;
+        `}
+      >
+        {link.name}
+      </a>
+    );
+  })}
+</nav>

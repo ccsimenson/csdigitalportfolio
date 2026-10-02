@@ -1,0 +1,34 @@
+---
+const { title, description, link } = Astro.props;
+---
+
+<article
+  style="
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    background: #fafafa;
+  "
+>
+  <h3 style="margin-top: 0; margin-bottom: 0.5rem;">
+    {title}
+  </h3>
+
+  <p style="margin: 0.5rem 0 1rem; line-height: 1.6;">
+    {description}
+  </p>
+
+  {link && (
+    <a
+      href={link}
+      style="
+        text-decoration: none;
+        color: #0066cc;
+        font-weight: 600;
+      "
+    >
+      View Project →
+    </a>
+  )}
+</article>

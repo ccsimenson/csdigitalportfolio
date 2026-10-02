@@ -1,17 +1,40 @@
 ---
-
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="Cory Simenson — Portfolio">
+  <Header />
+
+  <main style="max-width: 760px; margin: 2rem auto; padding: 0 1rem;">
+    <section style="margin-bottom: 3rem;">
+      <h1 style="font-size: 2.4rem; margin-bottom: 1rem;">Cory Simenson</h1>
+      <p style="font-size: 1.2rem; line-height: 1.6;">
+        Linux-focused systems builder working across automation, virtualization,
+        home infrastructure, and long-term creative engineering. This portfolio
+        showcases my projects, writing, and technical work.
+      </p>
+    </section>
+
+    <section style="margin-bottom: 3rem;">
+      <h2>Projects</h2>
+      <p>Systems, tools, and infrastructure I build.</p>
+      <a href="/projects">View Projects →</a>
+    </section>
+
+    <section style="margin-bottom: 3rem;">
+      <h2>Writing</h2>
+      <p>Technical essays, notes, and documentation.</p>
+      <a href="/writing">Read Writing →</a>
+    </section>
+
+    <section style="margin-bottom: 3rem;">
+      <h2>About</h2>
+      <p>My background, trajectory, and professional identity.</p>
+      <a href="/about">About Me →</a>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

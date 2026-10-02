@@ -1,0 +1,48 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+
+// Temporary static project list.
+// Later, you can replace this with a content collection.
+const projects = [
+  {
+    title: "Home Assistant Supervisor Migration",
+    description:
+      "Transitioning my smart home ecosystem from Google Home to Home Assistant Supervisor, including device migration, automation rebuilds, and stability improvements.",
+    link: "/projects/home-assistant-migration",
+  },
+  {
+    title: "KVM/QEMU Virtualization Stack",
+    description:
+      "Building stable multi-machine virtualization workflows across Zora, Pavilion, and Victus using KVM/QEMU, libvirt, and structured operator-style deployment.",
+    link: "/projects/virtualization-stack",
+  },
+  {
+    title: "Linux Multi-System Environment",
+    description:
+      "Maintaining a coordinated Linux environment across multiple machines with shared workflows, synchronized configs, and hardware optimization.",
+    link: "/projects/linux-multi-system",
+  },
+];
+---
+
+<BaseLayout title="Projects — Cory Simenson">
+  <Header />
+
+  <main style="max-width: 760px; margin: 2rem auto; padding: 0 1rem;">
+    <h1>Projects</h1>
+    <p style="line-height: 1.6; margin-bottom: 2rem;">
+      A collection of systems, tools, and infrastructure I build and maintain.
+      These projects reflect my operator-style workflows, long-term engineering
+      approach, and focus on clarity, stability, and maintainability.
+    </p>
+
+    {projects.map((project) => (
+      <ProjectCard {...project} />
+    ))}
+  </main>
+
+  <Footer />
+</BaseLayout>

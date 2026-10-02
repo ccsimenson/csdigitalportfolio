@@ -1,0 +1,73 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+// Temporary static writing list.
+// Later, you can replace this with a content collection.
+const posts = [
+  {
+    title: "Operator-Style Workflows",
+    description:
+      "A breakdown of the structured, step-by-step workflow patterns I use across Linux, automation, and multi-system environments.",
+    link: "/writing/operator-style-workflows",
+  },
+  {
+    title: "Home Infrastructure Stability",
+    description:
+      "Notes on building and maintaining stable multi-room home environments, including automation, cleaning cycles, and device coordination.",
+    link: "/writing/home-infrastructure-stability",
+  },
+  {
+    title: "Virtualization Notes",
+    description:
+      "Technical notes on KVM/QEMU, libvirt, qcow2 storage, and multi-machine virtualization strategy.",
+    link: "/writing/virtualization-notes",
+  },
+];
+---
+
+<BaseLayout title="Writing — Cory Simenson">
+  <Header />
+
+  <main style="max-width: 760px; margin: 2rem auto; padding: 0 1rem;">
+    <h1>Writing</h1>
+    <p style="line-height: 1.6; margin-bottom: 2rem;">
+      Long-form technical notes, essays, and documentation. These pieces reflect
+      my systems thinking, operator-style workflows, and ongoing engineering work.
+    </p>
+
+    {posts.map((post) => (
+      <article
+        style="
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          padding: 1.25rem;
+          margin-bottom: 1.5rem;
+          background: #fafafa;
+        "
+      >
+        <h3 style="margin-top: 0; margin-bottom: 0.5rem;">
+          {post.title}
+        </h3>
+
+        <p style="margin: 0.5rem 0 1rem; line-height: 1.6;">
+          {post.description}
+        </p>
+
+        <a
+          href={post.link}
+          style="
+            text-decoration: none;
+            color: #0066cc;
+            font-weight: 600;
+          "
+        >
+          Read →
+        </a>
+      </article>
+    ))}
+  </main>
+
+  <Footer />
+</BaseLayout>
