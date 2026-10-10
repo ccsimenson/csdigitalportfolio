@@ -1,0 +1,153 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+
+<BaseLayout title={`${project.data.title} — Project`}>
+  <Header />
+
+  <main class="project-detail">
+    <div class="breadcrumb">
+      <a href="/projects">← Back to Projects</a>
+    </div>
+
+    <header class="project-header">
+      <h1>{project.data.title}</h1>
+      <p class="description">{project.data.description}</p>
+
+      <div class="meta-row">
+        {project.data.status && (
+          <span class="status-badge">{project.data.status}</span>
+        )}
+        {project.data.tags && project.data.tags.length > 0 && (
+          <div class="tags-list">
+            {project.data.tags.map((tag: string) => (
+              <span class="tag">#{tag}</span>
+            ))}
+          </div>
+        )}
+      </div>
+    </header>
+
+    <div class="project-content">
+      <Content />
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .project-detail {
+    max-width: 760px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .breadcrumb {
+    margin-bottom: 1.5rem;
+  }
+
+  .breadcrumb a {
+    text-decoration: none;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .breadcrumb a:hover {
+    color: var(--link);
+  }
+
+  .project-header {
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+  }
+
+  .project-header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+  }
+
+  .description {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .status-badge {
+    background: var(--card-bg-hover);
+    border: 1px solid var(--border);
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .project-content {
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .project-content :global(h2) {
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+  }
+
+  .project-content :global(p) {
+    margin-bottom: 1.25rem;
+  }
+
+  .project-content :global(ul) {
+    margin-bottom: 1.25rem;
+    padding-left: 1.5rem;
+  }
+
+  .project-content :global(li) {
+    margin-bottom: 0.4rem;
+  }
+
+  .project-content :global(code) {
+    background: var(--card-bg-hover);
+    border: 1px solid var(--border);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+</style>
+

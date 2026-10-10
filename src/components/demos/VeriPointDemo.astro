@@ -1,0 +1,1258 @@
+---
+// src/components/demos/VeriPointDemo.astro
+const defaultPayload = JSON.stringify(
+  {
+    state_code: "MT",
+    aggregator: "Netsmart Mobile Caregiver+",
+    statutory_spec: "21st Century Cures Act § 12006",
+    provider_npi: "1982736450",
+    client_medicaid_id: "MT-98234",
+    program_code: "CFC_PT12",
+    hcpcs_service_code: "T1019 U9",
+    geofence_verified: true,
+    geofence_meters: 38.2,
+    service_setting: "Home (01)",
+    cms_units: 4,
+    mileage_a0425: 0.0,
+    reimbursement_rate: 0.76,
+    dual_signature_sealed: true,
+  },
+  null,
+  2
+);
+---
+
+<div class="veripoint-container">
+  <div class="phone-frame">
+    <!-- Smartphone Bezel Top -->
+    <div class="phone-top-bar">
+      <span class="status-time" id="vp-clock">09:41</span>
+      <div class="camera-notch"></div>
+      <div class="phone-indicators">
+        <span class="indicator-icon">5G</span>
+        <span class="indicator-icon">100%</span>
+      </div>
+    </div>
+
+    <!-- App Header & Role Tabs -->
+    <div class="vp-header">
+      <div class="vp-brand">
+        <div class="brand-logo">VP</div>
+        <div class="brand-text">
+          <span class="brand-title">VeriPoint EVV</span>
+          <span class="brand-sub">Montana DPHHS (Netsmart MC+)</span>
+        </div>
+      </div>
+      <div class="vp-role-tabs">
+        <button type="button" class="role-tab active" data-tab="caregiver">Point of Care</button>
+        <button type="button" class="role-tab" data-tab="client">Client Portal</button>
+        <button type="button" class="role-tab" data-tab="edi">Netsmart EDI</button>
+      </div>
+    </div>
+
+    <!-- Screen 1: Caregiver Point of Care Flow -->
+    <div class="tab-pane active" id="pane-caregiver">
+      
+      <!-- STEP 1: PRE-SHIFT / CLOCK IN -->
+      <div id="cg-step-clockin" class="flow-step">
+        <div class="card-section">
+          <div class="section-title-row">
+            <span class="step-badge">1. Pre-Visit</span>
+            <span class="section-heading">Pairing & Program</span>
+          </div>
+
+          <div class="field-group">
+            <label>Caregiver</label>
+            <div class="readonly-pill">Sarah Jenkins, Attendant (CG-402)</div>
+          </div>
+
+          <div class="field-group">
+            <label>Client (Medicaid #MT-98234)</label>
+            <div class="readonly-pill">Eleanor Vance — Community First Choice</div>
+          </div>
+
+          <div class="field-group">
+            <label for="vp-service-code">Service & HCPCS Code</label>
+            <select id="vp-service-code" class="vp-select">
+              <option value="T1019 U9" data-transit="false" data-cat="Personal Care">T1019 U9 — Self-Directed Personal Care (15m)</option>
+              <option value="S5126 U9" data-transit="true" data-cat="Community Supports">S5126 U9 — Community Supports & Shopping (Transit)</option>
+              <option value="T2001 U9" data-transit="true" data-cat="Transit">T2001 U9 — Medical Escort Transit (Transit)</option>
+              <option value="S5125 UA" data-transit="false" data-cat="Attendant Care">S5125 UA — Big Sky Waiver Attendant Care (15m)</option>
+            </select>
+          </div>
+
+          <div class="geofence-box">
+            <div class="geofence-status">
+              <span class="status-pulse"></span>
+              <strong>GPS GEOFENCE PASS</strong>
+            </div>
+            <div class="geofence-details">
+              <span>Dist: <strong>38 meters</strong> from authorized residence</span>
+              <span>Coordinates: 46.8797° N, 110.3626° W (±3.8m)</span>
+            </div>
+          </div>
+
+          <label class="checkbox-row">
+            <input type="checkbox" id="vp-attestation" checked />
+            <span>I attest that I am physically present at the authorized client location.</span>
+          </label>
+
+          <button type="button" id="vp-clockin-btn" class="vp-btn primary">
+            ▶ Clock In & Begin Shift
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 2: ACTIVE SHIFT -->
+      <div id="cg-step-active" class="flow-step" style="display: none;">
+        <!-- Live Shift Status Banner -->
+        <div class="shift-live-banner">
+          <div class="timer-box">
+            <span class="pulse-dot"></span>
+            <span class="timer-label">ACTIVE SHIFT</span>
+            <div class="timer-digits" id="vp-timer-display">00:00:00</div>
+          </div>
+          <div class="fast-forward-actions">
+            <span class="ff-label">Simulator tools:</span>
+            <button type="button" class="ff-btn" id="vp-add-15m">+15 Min</button>
+            <button type="button" class="ff-btn" id="vp-add-1h">+1 Hour</button>
+          </div>
+        </div>
+
+        <!-- ADL Task Checklist -->
+        <div class="card-section">
+          <div class="section-title-row">
+            <span class="step-badge">2. ADL Tasks</span>
+            <span class="section-heading">Services Provided</span>
+          </div>
+          <div class="adl-grid">
+            <label class="adl-item">
+              <input type="checkbox" checked />
+              <span>Mobility & Transfers</span>
+            </label>
+            <label class="adl-item">
+              <input type="checkbox" checked />
+              <span>Meal Prep & Nutrition</span>
+            </label>
+            <label class="adl-item">
+              <input type="checkbox" checked />
+              <span>Medication Prompting</span>
+            </label>
+            <label class="adl-item">
+              <input type="checkbox" />
+              <span>Personal Hygiene</span>
+            </label>
+            <label class="adl-item">
+              <input type="checkbox" />
+              <span>Light Housekeeping</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Point-of-Care Transit Mileage (HCPCS A0425) -->
+        <div class="card-section">
+          <div class="section-title-row">
+            <span class="step-badge">3. Transit</span>
+            <span class="section-heading">Point-of-Care Mileage (A0425)</span>
+          </div>
+          <div class="mileage-tracker">
+            <div class="mileage-readout">
+              <span class="odometer" id="vp-miles-val">0.0</span>
+              <span class="mileage-unit">MILES</span>
+            </div>
+            <div class="mileage-stepper">
+              <button type="button" class="stepper-btn" id="vp-mile-minus">- 1.0</button>
+              <button type="button" class="stepper-btn" id="vp-mile-plus">+ 1.0</button>
+              <button type="button" class="stepper-btn primary" id="vp-mile-plus5">+ 5.0</button>
+            </div>
+            <div class="reimbursement-pill" id="vp-mileage-cost">
+              Est. Reimbursement: $0.00 (MT Rate @ $0.76/mi)
+            </div>
+          </div>
+        </div>
+
+        <!-- Dual Digital Signatures -->
+        <div class="card-section">
+          <div class="section-title-row">
+            <span class="step-badge">4. Signatures</span>
+            <span class="section-heading">Dual Attestation Signatures</span>
+          </div>
+
+          <div class="signature-box">
+            <div class="sig-header">
+              <span>Caregiver Signature (Sarah Jenkins)</span>
+              <button type="button" class="sig-clear" id="vp-clear-cg-sig">Clear</button>
+            </div>
+            <canvas id="cg-canvas" width="340" height="90" class="sig-canvas"></canvas>
+          </div>
+
+          <div class="signature-box">
+            <div class="sig-header">
+              <span>Client / Representative Signature (Eleanor Vance)</span>
+              <button type="button" class="sig-clear" id="vp-clear-cl-sig">Clear</button>
+            </div>
+            <canvas id="cl-canvas" width="340" height="90" class="sig-canvas"></canvas>
+          </div>
+
+          <div class="crypto-seal-preview">
+            <span class="seal-icon">🔒</span>
+            <span class="seal-hash" id="vp-hash-display">VeriPointSig_pending_signature</span>
+          </div>
+
+          <button type="button" id="vp-clockout-btn" class="vp-btn danger">
+            ■ Clock Out & Seal EVV Record
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 3: CURES ACT AUDIT SLIP -->
+      <div id="cg-step-slip" class="flow-step" style="display: none;">
+        <div class="card-section audit-slip">
+          <div class="slip-header">
+            <div class="cures-seal">✓ CURES ACT SECTION 12006 VERIFIED</div>
+            <h3>Electronic Visit Verification Slip</h3>
+            <span class="slip-timestamp" id="vp-slip-date"></span>
+          </div>
+
+          <div class="audit-grid">
+            <div class="audit-row">
+              <span class="audit-key">1. Service Type:</span>
+              <span class="audit-val" id="vp-slip-service">T1019 U9 (CFC Personal Care)</span>
+            </div>
+            <div class="audit-row">
+              <span class="audit-key">2. Individual Receiving:</span>
+              <span class="audit-val">Eleanor Vance (Medicaid #MT-98234)</span>
+            </div>
+            <div class="audit-row">
+              <span class="audit-key">3. Date of Service:</span>
+              <span class="audit-val" id="vp-slip-srvdate"></span>
+            </div>
+            <div class="audit-row">
+              <span class="audit-key">4. Delivery Location:</span>
+              <span class="audit-val">46.8797, -110.3626 (Geofence Verified &lt;38m)</span>
+            </div>
+            <div class="audit-row">
+              <span class="audit-key">5. Individual Providing:</span>
+              <span class="audit-val">Sarah Jenkins (NPI: 1982736450 / CG-402)</span>
+            </div>
+            <div class="audit-row">
+              <span class="audit-key">6. Recorded Times:</span>
+              <span class="audit-val" id="vp-slip-times"></span>
+            </div>
+            <div class="audit-row">
+              <span class="audit-key">CMS Rounding Units:</span>
+              <span class="audit-val" id="vp-slip-units">4 Units (1.0 Hr)</span>
+            </div>
+            <div class="audit-row">
+              <span class="audit-key">Transit Mileage (A0425):</span>
+              <span class="audit-val" id="vp-slip-mileage">0.0 mi ($0.00)</span>
+            </div>
+            <div class="audit-row full">
+              <span class="audit-key">Tamper-Evident Hash:</span>
+              <span class="audit-val hash" id="vp-slip-hash"></span>
+            </div>
+          </div>
+
+          <div class="aggregator-status-badge">
+            <span class="agg-icon">📡</span>
+            <span>Queued for Montana Netsmart Alt-EVV v2.4 Batch Upload</span>
+          </div>
+
+          <button type="button" id="vp-reset-btn" class="vp-btn secondary">
+            ↻ Reset & Start New Visit
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Screen 2: Client Portal View -->
+    <div class="tab-pane" id="pane-client" style="display: none;">
+      <div class="card-section">
+        <div class="section-title-row">
+          <span class="step-badge">Client View</span>
+          <span class="section-heading">Eleanor Vance</span>
+        </div>
+
+        <div class="auth-meter-box">
+          <div class="meter-label-row">
+            <span>Weekly Prior Authorization</span>
+            <strong>28.0 / 35.0 Hrs</strong>
+          </div>
+          <div class="meter-bar">
+            <div class="meter-fill" style="width: 80%;"></div>
+          </div>
+          <span class="meter-sub">7.0 hours remaining for Community First Choice (Week ending Sun)</span>
+        </div>
+
+        <div class="portal-visits-list">
+          <div class="portal-visit-item approved">
+            <div class="visit-head">
+              <strong>Yesterday — T1019 U9</strong>
+              <span class="status-chip success">Approved</span>
+            </div>
+            <div class="visit-sub">Sarah Jenkins • 4.0 hrs • Attestation Signed</div>
+          </div>
+
+          <div class="portal-visit-item pending">
+            <div class="visit-head">
+              <strong>Today's Active Shift</strong>
+              <span class="status-chip warning" id="client-pending-status">In Progress</span>
+            </div>
+            <div class="visit-sub">Self-Directed Attendant Care • Dual signature at clock-out</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 3: Netsmart EDI Spec / JSON View -->
+    <div class="tab-pane" id="pane-edi" style="display: none;">
+      <div class="card-section">
+        <div class="section-title-row">
+          <span class="step-badge">Alt-EVV</span>
+          <span class="section-heading">Montana Netsmart Alt-EVV Payload</span>
+        </div>
+        <p class="edi-desc">
+          Generated compliant payload according to Montana DPHHS SLTC Alt-EVV v2.4 specifications:
+        </p>
+        <pre class="edi-code" id="vp-edi-payload">{defaultPayload}</pre>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .veripoint-container {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+  }
+
+  .phone-frame {
+    width: 100%;
+    max-width: 410px;
+    background: var(--bg);
+    border: 8px solid #0f172a;
+    border-radius: 36px;
+    overflow: hidden;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    font-family: inherit;
+  }
+
+  .phone-top-bar {
+    background: #0f172a;
+    color: #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1.25rem 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .camera-notch {
+    width: 90px;
+    height: 14px;
+    background: #1e293b;
+    border-radius: 9999px;
+  }
+
+  .phone-indicators {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .vp-header {
+    background: #0f172a;
+    padding: 0.75rem 1rem 0.5rem;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  .vp-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .brand-logo {
+    width: 28px;
+    height: 28px;
+    background: #3b82f6;
+    color: white;
+    font-weight: 800;
+    font-size: 0.8rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brand-title {
+    color: #f8fafc;
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1.1;
+  }
+
+  .brand-sub {
+    color: #94a3b8;
+    font-size: 0.7rem;
+  }
+
+  .vp-role-tabs {
+    display: flex;
+    gap: 0.35rem;
+    background: #1e293b;
+    padding: 3px;
+    border-radius: 8px;
+  }
+
+  .role-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.35rem 0.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .role-tab.active {
+    background: #3b82f6;
+    color: #ffffff;
+  }
+
+  .tab-pane {
+    padding: 1rem;
+    max-height: 680px;
+    overflow-y: auto;
+  }
+
+  .card-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .section-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .step-badge {
+    background: #3b82f6;
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.15rem 0.45rem;
+    border-radius: 9999px;
+    text-transform: uppercase;
+  }
+
+  .section-heading {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .field-group label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .readonly-pill {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 0.45rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .vp-select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 0.45rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: var(--text);
+    font-family: inherit;
+  }
+
+  .geofence-box {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    border-radius: 8px;
+    padding: 0.65rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .geofence-status {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.75rem;
+    color: #059669;
+    margin-bottom: 0.25rem;
+  }
+
+  .status-pulse {
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+  }
+
+  .geofence-details {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    line-height: 1.35;
+  }
+
+  .checkbox-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: var(--text);
+    margin-bottom: 1rem;
+    cursor: pointer;
+  }
+
+  .vp-btn {
+    width: 100%;
+    padding: 0.65rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s ease;
+  }
+
+  .vp-btn.primary {
+    background: #2563eb;
+    color: #ffffff;
+  }
+
+  .vp-btn.primary:hover {
+    background: #1d4ed8;
+  }
+
+  .vp-btn.danger {
+    background: #dc2626;
+    color: #ffffff;
+  }
+
+  .vp-btn.danger:hover {
+    background: #b91c1c;
+  }
+
+  .vp-btn.secondary {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .shift-live-banner {
+    background: #0f172a;
+    border-radius: 12px;
+    padding: 0.85rem;
+    color: white;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .timer-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .timer-label {
+    font-size: 0.65rem;
+    color: #38bdf8;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .timer-digits {
+    font-size: 1.4rem;
+    font-weight: 800;
+    font-family: monospace;
+    letter-spacing: 0.05em;
+    color: #f8fafc;
+  }
+
+  .pulse-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: #10b981;
+    border-radius: 50%;
+  }
+
+  .fast-forward-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
+  }
+
+  .ff-label {
+    font-size: 0.65rem;
+    color: #94a3b8;
+  }
+
+  .ff-btn {
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #e2e8f0;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .ff-btn:hover {
+    background: #334155;
+  }
+
+  .adl-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .adl-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .mileage-tracker {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .mileage-readout {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    justify-content: center;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 0.6rem;
+    border-radius: 8px;
+  }
+
+  .odometer {
+    font-size: 1.6rem;
+    font-weight: 800;
+    font-family: monospace;
+    color: #2563eb;
+  }
+
+  .mileage-unit {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+
+  .mileage-stepper {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .stepper-btn {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.35rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .stepper-btn.primary {
+    background: #2563eb;
+    color: white;
+    border: none;
+  }
+
+  .reimbursement-pill {
+    background: rgba(37, 99, 235, 0.08);
+    border: 1px solid rgba(37, 99, 235, 0.25);
+    padding: 0.45rem;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #2563eb;
+    text-align: center;
+  }
+
+  .signature-box {
+    margin-bottom: 0.85rem;
+  }
+
+  .sig-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.3rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .sig-clear {
+    background: none;
+    border: none;
+    color: #ef4444;
+    font-size: 0.7rem;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .sig-canvas {
+    width: 100%;
+    height: 80px;
+    background: #ffffff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 6px;
+    cursor: crosshair;
+    display: block;
+  }
+
+  .crypto-seal-preview {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 0.45rem 0.65rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.7rem;
+    font-family: monospace;
+    color: var(--text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .audit-slip {
+    background: #ffffff;
+    color: #0f172a;
+    border: 2px dashed #94a3b8;
+  }
+
+  .slip-header {
+    text-align: center;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .cures-seal {
+    background: #10b981;
+    color: white;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 0.2rem 0.5rem;
+    border-radius: 9999px;
+    display: inline-block;
+    margin-bottom: 0.35rem;
+  }
+
+  .slip-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: #0f172a;
+  }
+
+  .slip-timestamp {
+    font-size: 0.7rem;
+    color: #64748b;
+  }
+
+  .audit-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin-bottom: 1rem;
+  }
+
+  .audit-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.74rem;
+    border-bottom: 1px dotted #e2e8f0;
+    padding-bottom: 0.2rem;
+  }
+
+  .audit-key {
+    color: #64748b;
+    font-weight: 600;
+  }
+
+  .audit-val {
+    color: #0f172a;
+    font-weight: 700;
+    text-align: right;
+  }
+
+  .audit-val.hash {
+    font-family: monospace;
+    font-size: 0.68rem;
+    word-break: break-all;
+  }
+
+  .aggregator-status-badge {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    padding: 0.5rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 1rem;
+  }
+
+  .auth-meter-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 0.85rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+
+  .meter-label-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    margin-bottom: 0.4rem;
+    color: var(--text);
+  }
+
+  .meter-bar {
+    height: 8px;
+    background: var(--card-bg-hover);
+    border-radius: 9999px;
+    overflow: hidden;
+    margin-bottom: 0.4rem;
+  }
+
+  .meter-fill {
+    height: 100%;
+    background: #3b82f6;
+    border-radius: 9999px;
+  }
+
+  .meter-sub {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+
+  .portal-visits-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .portal-visit-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.65rem;
+  }
+
+  .visit-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+    margin-bottom: 0.2rem;
+    color: var(--text);
+  }
+
+  .visit-sub {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+
+  .status-chip {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+
+  .status-chip.success {
+    background: #dcfce7;
+    color: #15803d;
+  }
+
+  .status-chip.warning {
+    background: #fef3c7;
+    color: #b45309;
+  }
+
+  .edi-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .edi-code {
+    background: #0f172a;
+    color: #38bdf8;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    overflow-x: auto;
+    font-family: monospace;
+    line-height: 1.4;
+  }
+</style>
+
+<script>
+  function setupVeriPointDemo() {
+    // Role Tab Navigation
+    const tabs = document.querySelectorAll(".role-tab");
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        const target = tab.getAttribute("data-tab");
+
+        document.querySelectorAll(".tab-pane").forEach((p) => {
+          (p as HTMLElement).style.display = "none";
+        });
+        const targetPane = document.getElementById(`pane-${target}`);
+        if (targetPane) targetPane.style.display = "block";
+      });
+    });
+
+    // Flow State Variables
+    let elapsedSeconds = 0;
+    let timerInterval: any = null;
+    let milesLogged = 0.0;
+    const mileageRate = 0.76;
+    let clockInTimestamp: Date | null = null;
+    let clockOutTimestamp: Date | null = null;
+
+    // Elements
+    const stepClockin = document.getElementById("cg-step-clockin");
+    const stepActive = document.getElementById("cg-step-active");
+    const stepSlip = document.getElementById("cg-step-slip");
+    const clockinBtn = document.getElementById("vp-clockin-btn");
+    const clockoutBtn = document.getElementById("vp-clockout-btn");
+    const resetBtn = document.getElementById("vp-reset-btn");
+    const timerDisplay = document.getElementById("vp-timer-display");
+    const add15mBtn = document.getElementById("vp-add-15m");
+    const add1hBtn = document.getElementById("vp-add-1h");
+    const milesVal = document.getElementById("vp-miles-val");
+    const mileageCost = document.getElementById("vp-mileage-cost");
+    const mileMinus = document.getElementById("vp-mile-minus");
+    const milePlus = document.getElementById("vp-mile-plus");
+    const milePlus5 = document.getElementById("vp-mile-plus5");
+    const hashDisplay = document.getElementById("vp-hash-display");
+
+    // Canvas Signature Pads
+    function initCanvas(canvasId: string, clearBtnId: string) {
+      const canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
+      const clearBtn = document.getElementById(clearBtnId);
+      if (!canvas) return;
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = "round";
+      ctx.strokeStyle = "#1e293b";
+
+      let drawing = false;
+
+      function getPos(e: MouseEvent | TouchEvent) {
+        const rect = canvas!.getBoundingClientRect();
+        if ("touches" in e) {
+          return {
+            x: e.touches[0].clientX - rect.left,
+            y: e.touches[0].clientY - rect.top,
+          };
+        }
+        return {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top,
+        };
+      }
+
+      function startDraw(e: any) {
+        drawing = true;
+        const pos = getPos(e);
+        ctx?.beginPath();
+        ctx?.moveTo(pos.x, pos.y);
+        updateSignatureHash();
+      }
+
+      function draw(e: any) {
+        if (!drawing) return;
+        e.preventDefault();
+        const pos = getPos(e);
+        ctx?.lineTo(pos.x, pos.y);
+        ctx?.stroke();
+      }
+
+      function stopDraw() {
+        if (drawing) {
+          drawing = false;
+          updateSignatureHash();
+        }
+      }
+
+      canvas.addEventListener("mousedown", startDraw);
+      canvas.addEventListener("mousemove", draw);
+      window.addEventListener("mouseup", stopDraw);
+
+      canvas.addEventListener("touchstart", startDraw, { passive: false });
+      canvas.addEventListener("touchmove", draw, { passive: false });
+      window.addEventListener("touchend", stopDraw);
+
+      if (clearBtn) {
+        clearBtn.addEventListener("click", () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          updateSignatureHash();
+        });
+      }
+    }
+
+    initCanvas("cg-canvas", "vp-clear-cg-sig");
+    initCanvas("cl-canvas", "vp-clear-cl-sig");
+
+    function updateSignatureHash() {
+      const randomSeed = Math.random().toString(36).substring(2, 10);
+      const hash = `VeriPointSig_SHA256_${Date.now().toString(16)}_${randomSeed}`;
+      if (hashDisplay) {
+        hashDisplay.textContent = hash;
+      }
+    }
+
+    function formatTime(totalSec: number) {
+      const h = Math.floor(totalSec / 3600).toString().padStart(2, "0");
+      const m = Math.floor((totalSec % 3600) / 60).toString().padStart(2, "0");
+      const s = (totalSec % 60).toString().padStart(2, "0");
+      return `${h}:${m}:${s}`;
+    }
+
+    // Step 1 -> Step 2: Clock In
+    if (clockinBtn) {
+      clockinBtn.addEventListener("click", () => {
+        clockInTimestamp = new Date();
+        elapsedSeconds = 0;
+        if (stepClockin) stepClockin.style.display = "none";
+        if (stepActive) stepActive.style.display = "block";
+
+        timerInterval = setInterval(() => {
+          elapsedSeconds++;
+          if (timerDisplay) timerDisplay.textContent = formatTime(elapsedSeconds);
+        }, 1000);
+
+        const pendingStatus = document.getElementById("client-pending-status");
+        if (pendingStatus) pendingStatus.textContent = "Active Now";
+      });
+    }
+
+    // Fast-Forward Simulator Buttons
+    if (add15mBtn) {
+      add15mBtn.addEventListener("click", () => {
+        elapsedSeconds += 900;
+        if (timerDisplay) timerDisplay.textContent = formatTime(elapsedSeconds);
+      });
+    }
+
+    if (add1hBtn) {
+      add1hBtn.addEventListener("click", () => {
+        elapsedSeconds += 3600;
+        if (timerDisplay) timerDisplay.textContent = formatTime(elapsedSeconds);
+      });
+    }
+
+    // Mileage Controls
+    function updateMileageUI() {
+      if (milesVal) milesVal.textContent = milesLogged.toFixed(1);
+      const reimb = (milesLogged * mileageRate).toFixed(2);
+      if (mileageCost) {
+        mileageCost.textContent = `Est. Reimbursement: $${reimb} (MT Rate @ $0.76/mi)`;
+      }
+    }
+
+    if (milePlus) {
+      milePlus.addEventListener("click", () => {
+        milesLogged += 1.0;
+        updateMileageUI();
+      });
+    }
+
+    if (milePlus5) {
+      milePlus5.addEventListener("click", () => {
+        milesLogged += 5.0;
+        updateMileageUI();
+      });
+    }
+
+    if (mileMinus) {
+      mileMinus.addEventListener("click", () => {
+        milesLogged = Math.max(0, milesLogged - 1.0);
+        updateMileageUI();
+      });
+    }
+
+    // Step 2 -> Step 3: Clock Out
+    if (clockoutBtn) {
+      clockoutBtn.addEventListener("click", () => {
+        clearInterval(timerInterval);
+        clockOutTimestamp = new Date();
+
+        if (stepActive) stepActive.style.display = "none";
+        if (stepSlip) stepSlip.style.display = "block";
+
+        // Calculate CMS units (15-min increments, 8-minute rounding)
+        const totalMinutes = Math.max(15, Math.ceil(elapsedSeconds / 60));
+        const cmsUnits = Math.max(1, Math.round(totalMinutes / 15));
+        const hoursRounded = (cmsUnits * 0.25).toFixed(2);
+
+        // Populate Audit Slip
+        const slipDate = document.getElementById("vp-slip-date");
+        const slipSrvDate = document.getElementById("vp-slip-srvdate");
+        const slipTimes = document.getElementById("vp-slip-times");
+        const slipUnits = document.getElementById("vp-slip-units");
+        const slipMileage = document.getElementById("vp-slip-mileage");
+        const slipHash = document.getElementById("vp-slip-hash");
+        const svcSelect = document.getElementById("vp-service-code") as HTMLSelectElement | null;
+        const slipService = document.getElementById("vp-slip-service");
+
+        const nowStr = new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+
+        if (slipDate) slipDate.textContent = `Generated: ${nowStr} • Local Device Audit`;
+        if (slipSrvDate) slipSrvDate.textContent = nowStr;
+
+        if (svcSelect && slipService) {
+          slipService.textContent = svcSelect.value;
+        }
+
+        if (slipTimes && clockInTimestamp && clockOutTimestamp) {
+          const tIn = clockInTimestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+          const tOut = clockOutTimestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+          slipTimes.textContent = `${tIn} — ${tOut} (${formatTime(elapsedSeconds)})`;
+        }
+
+        if (slipUnits) {
+          slipUnits.textContent = `${cmsUnits} Units (${hoursRounded} Hrs billed)`;
+        }
+
+        if (slipMileage) {
+          const reimb = (milesLogged * mileageRate).toFixed(2);
+          slipMileage.textContent = `${milesLogged.toFixed(1)} mi ($${reimb})`;
+        }
+
+        if (slipHash) {
+          slipHash.textContent = hashDisplay?.textContent || `VeriPointSig_e3b0c44298fc1c149afb`;
+        }
+
+        // Update EDI payload preview
+        const ediPayload = document.getElementById("vp-edi-payload");
+        if (ediPayload && svcSelect) {
+          ediPayload.textContent = JSON.stringify(
+            {
+              state_code: "MT",
+              aggregator: "Netsmart Mobile Caregiver+",
+              statutory_spec: "21st Century Cures Act § 12006",
+              provider_npi: "1982736450",
+              caregiver_id: "CG-402",
+              client_medicaid_id: "MT-98234",
+              hcpcs_service_code: svcSelect.value,
+              start_time: clockInTimestamp?.toISOString(),
+              end_time: clockOutTimestamp?.toISOString(),
+              cms_units: cmsUnits,
+              geofence_verified: true,
+              geofence_distance_meters: 38.2,
+              mileage_a0425: parseFloat(milesLogged.toFixed(1)),
+              mileage_reimbursement: parseFloat((milesLogged * mileageRate).toFixed(2)),
+              tamper_evident_hash: hashDisplay?.textContent,
+              dual_signatures_present: true,
+            },
+            null,
+            2
+          );
+        }
+
+        const pendingStatus = document.getElementById("client-pending-status");
+        if (pendingStatus) {
+          pendingStatus.textContent = "Signed & Sealed";
+          pendingStatus.className = "status-chip success";
+        }
+      });
+    }
+
+    // Reset Flow
+    if (resetBtn) {
+      resetBtn.addEventListener("click", () => {
+        elapsedSeconds = 0;
+        milesLogged = 0.0;
+        updateMileageUI();
+        if (timerDisplay) timerDisplay.textContent = "00:00:00";
+        if (stepSlip) stepSlip.style.display = "none";
+        if (stepActive) stepActive.style.display = "none";
+        if (stepClockin) stepClockin.style.display = "block";
+      });
+    }
+  }
+
+  setupVeriPointDemo();
+  document.addEventListener("astro:after-swap", setupVeriPointDemo);
+</script>

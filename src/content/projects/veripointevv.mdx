@@ -1,0 +1,101 @@
+---
+title: "VeriPoint EVV: Offline-First Cures Act Electronic Visit Verification"
+description: "A production-grade, offline-capable Electronic Visit Verification platform designed for Medicaid Personal Care Services (PCS), Self-Directed programs, and transit mileage tracking under the federal 21st Century Cures Act."
+date: 2026-03-01
+status: "Production Architecture"
+tags: ["Python", "Kotlin", "SQLite", "Medicaid EVV", "Netsmart", "Cures Act", "Offline-First"]
+order: 0
+---
+
+import VeriPointDemo from "../../components/demos/VeriPointDemo.astro";
+
+A production-grade, offline-capable **Electronic Visit Verification (EVV)** platform purpose-built for **Personal Care Services (PCS)**, **Attendant Care**, **Community Supports**, and **Self-Directed / Consumer-Directed** Medicaid programs under Section 12006 of the federal 21st Century Cures Act.
+
+## 📱 Interactive Point-of-Care Simulator
+
+Experience the live Point-of-Care mobile workflow below. Test the **GPS Geofence check**, run an **active shift with fast-forward tools**, track **transit mileage (A0425)**, sign the **dual digital canvas**, and inspect the generated **6-point Cures Act audit slip** and **Montana Netsmart Alt-EVV JSON payload**:
+
+<VeriPointDemo />
+
+---
+
+## 🏛️ The Problem: Federal Mandates & SaaS Friction
+
+Section 12006 of the federal **21st Century Cures Act** mandates that all state Medicaid programs implement Electronic Visit Verification for Personal Care Services (PCS) and Home Health Care Services. Every submitted visit must verify 6 statutory data points:
+
+1. **Type of service performed** (HCPCS billing code)
+2. **Individual receiving the service** (Medicaid recipient ID)
+3. **Date of the service**
+4. **Location of service delivery** (GPS coordinates & geofence attestation)
+5. **Individual providing the service** (Caregiver / Attendant ID or NPI)
+6. **Time service begins and ends** (Clock-in and clock-out timestamps)
+
+### Why Existing Solutions Fall Short
+Mainstream commercial EVV aggregators and SaaS vendors (Netsmart, Sandata, HHAeXchange, Tellus) were architected around large enterprise agencies:
+* **Per-Seat Licensing & Cloud Lock-in:** Expensive per-caregiver monthly SaaS subscription fees that strain independent providers and small agencies.
+* **Fragile Internet Dependencies:** Cloud-first mobile apps fail or discard logs in rural areas or during network blackouts.
+* **Ignoring Self-Directed Care:** Most software assumes a multi-client dispatch agency model, creating immense friction for consumer-directed Medicaid programs where an individual attendant works 1-on-1 with a single client.
+
+---
+
+## ⚙️ The Solution: VeriPoint EVV Architecture
+
+VeriPoint EVV was engineered around a decoupled, native 3-tier architecture operating without cloud dependencies:
+
+```
+                            ┌────────────────────────────────────────┐
+                            │          state_profiles.json           │
+                            │   (MT, TX, OH, PA, FL, CO, Custom)     │
+                            └───────────────────┬────────────────────┘
+                                                │
+                                                ▼
+                            ┌────────────────────────────────────────┐
+                            │          agency_profile.json           │
+                            │   (Active Agency & State Rules)        │
+                            └───────────┬────────────────┬───────────┘
+                                        │                │
+                        ┌───────────────┘                └───────────────┐
+                        ▼                                                ▼
+          ┌───────────────────────────┐                    ┌───────────────────────────┐
+          │        app_gui.py         │                    │       mobile_app.py       │
+          │     Desktop Admin Desk    │                    │   Point-of-Care Mobile    │
+          │  • Scheduling & Dispatch  │                    │  • GPS Geofence (<150m)   │
+          │  • Client Caseload & Auths│                    │  • Dual Digital Signatures│
+          │  • 837P Claims & Audits   │                    │  • Transit Mileage ($0.76)│
+          │  • Netsmart/EDI Exports   │                    │  • Client Approval Portal │
+          └───────────────────────────┘                    └───────────────────────────┘
+```
+
+### Key Technical Differentiators
+
+### 1. Dual Architecture (Self-Directed & Traditional Agency)
+* **Dedicated Attendant Pairing:** Built-in auto-pairing logic matches consumer-directed attendants 1-on-1 with their designated clients (such as Montana **Community First Choice `T1019 U9`** or **Big Sky Waiver `S5125 UA`**).
+* **Agency Dispatch Mode:** Supports traditional agency operations with floating staff, shift scheduling, and conflict detection.
+
+### 2. Integrated Point-of-Care Transit Mileage (HCPCS A0425)
+* Real-time odometer tracking during medical escort (`T2001 U9`), grocery shopping, and community integration (`S5126 U9`).
+* Auto-calculates travel reimbursements initialized to the federal IRS benchmark (**$0.76/mile**) with support for state-specific Non-Emergency Medical Transit (NEMT) fee schedules.
+
+### 3. Cryptographically Sealed Dual Digital Signatures
+* Interactive touchscreen/mouse signature canvas capturing **both** caregiver and client digital signatures at clock-out.
+* Includes timestamp attestation, GPS capture, and tamper-evident SHA-256 hashes (`VeriPointSig_...`) ensuring immutable audit evidence.
+
+### 4. True Offline-First Reliability
+* Local SQLite storage (`evv.db`) and local encrypted JSON data stores ensure shifts, GPS locations, and signatures are recorded without internet connectivity.
+* Synchronizes cleanly with state aggregators once a connection is re-established.
+
+### 5. Multi-State Aggregator Engine
+* Dynamic State Configuration Profiles (`state_profiles.json`) allow agencies to switch between state Medicaid aggregators without refactoring:
+  * **Montana (MT):** DPHHS SLTC Division — Netsmart (Mobile Caregiver+) Pipe-Delimited CSV / REST Alt-EVV.
+  * **Texas (TX):** HHSC LTSS — HHAeXchange Alt-EVV EDI / API.
+  * **Ohio (OH) & Pennsylvania (PA):** Sandata Alt-EVV REST.
+  * **ANSI X12 837P:** Professional electronic claim generator with CMS 8-minute rounding rules (15-minute unit increments).
+
+---
+
+## 🛠️ Stack & Technologies
+
+* **Desktop Application:** Python, Tkinter / TTK styling, SQLite (`evv.db`)
+* **Mobile Point-of-Care:** Python (Kivy / Buildozer) & Native Android (Kotlin, `MainActivity.kt`)
+* **Billing & EDI Engine:** ANSI X12 837P HIPAA 5010X222A1 generator with CMS 8-minute rounding logic
+* **Data & Compliance:** JSON schemas, CSV export engines, SHA-256 cryptographic attestation hashes
